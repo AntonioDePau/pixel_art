@@ -1,0 +1,107 @@
+﻿<html>
+	<head>
+		<style>
+		tr, td{
+  width:50px;
+  height:50px;
+  padding:0px;
+  border-collapse: collapse;
+  border:0;
+  //opacity: 0.95;
+}
+
+table{
+  border-collapse: collapse;
+  border:0;
+}
+
+#divtoshow{
+  background-color:white;
+  position:fixed;
+  display:none;
+  padding:3px;
+  border-radius:5px;
+}
+		</style>
+	</head>
+	
+<body>
+<div id="draw"></div>
+<div id="divtoshow">test</div>
+
+<script>
+var canvas = document.getElementById('draw');
+
+var drawing = [
+["01","00","00","00","01","00","00","00","00","00","00","01","01","01","01","01"],
+["00","FE","FC","00","00","F0","FE","F8","FE","F8","FE","00","01","01","01","01"],
+["00","FE","00","00","F1","F0","FE","F0","FE","F8","FE","00","01","01","01","01"],
+["00","00","00","00","00","F1","F0","F0","F8","F8","F8","00","01","00","01","01"],
+["00","01","00","F0","F1","00","00","00","00","00","00","00","00","EE","00","01"],
+["01","01","00","F1","F0","D6","D6","D6","D6","D6","00","01","00","EE","00","01"],
+["01","01","00","F1","F0","D6","F3","D6","D6","F3","00","01","00","EE","00","01"],
+["01","01","00","F0","F1","D6","F3","D6","D6","F3","00","01","00","EE","00","01"],
+["01","01","01","00","F1","D6","D6","D6","D6","D6","00","01","00","EE","00","01"],
+["01","00","00","00","00","00","F1","F1","F1","00","00","00","00","EE","00","01"],
+["00","F1","F0","F8","00","F0","F8","F8","F0","F8","00","00","FC","FC","FC","00"],
+["01","00","FE","00","00","F1","F0","F8","00","F8","00","FE","00","D6","00","01"],
+["00","00","00","00","00","00","00","00","F0","00","FE","00","FE","FC","00","01"],
+["00","FE","FC","00","00","F3","F1","F0","F0","F8","00","01","00","00","01","01"],
+["00","FE","FC","00","00","FE","FE","00","00","FE","00","01","01","01","01","01"],
+["01","00","00","01","00","F3","F3","00","00","F3","F3","00","01","01","01","01"]
+];
+var colors = {"00":"#000000","01":"transparent","02":"#f44336","03":"#ffebee","04":"#ffcdd2","05":"#ef9a9a","06":"#e57373","07":"#ef5350","08":"#f44336","09":"#e53935","0A":"#d32f2f","0B":"#c62828","0C":"#b71c1c","0D":"#ff8a80","0E":"#ff5252","0F":"#ff1744","10":"#d50000","11":"#e91e63","12":"#fce4ec","13":"#f8bbd0","14":"#f48fb1","15":"#f06292","16":"#ec407a","17":"#e91e63","18":"#d81b60","19":"#c2185b","1A":"#ad1457","1B":"#880e4f","1C":"#ff80ab","1D":"#ff4081","1E":"#f50057","1F":"#c51162","20":"#9c27b0","21":"#f3e5f5","22":"#e1bee7","23":"#ce93d8","24":"#ba68c8","25":"#ab47bc","26":"#9c27b0","27":"#8e24aa","28":"#7b1fa2","29":"#6a1b9a","2A":"#4a148c","2B":"#ea80fc","2C":"#e040fb","2D":"#d500f9","2E":"#aa00ff","2F":"#673ab7","30":"#ede7f6","31":"#d1c4e9","32":"#b39ddb","33":"#9575cd","34":"#7e57c2","35":"#673ab7","36":"#5e35b1","37":"#512da8","38":"#4527a0","39":"#311b92","3A":"#b388ff","3B":"#7c4dff","3C":"#651fff","3D":"#6200ea","3E":"#3f51b5","3F":"#e8eaf6","40":"#c5cae9","41":"#9fa8da","42":"#7986cb","43":"#5c6bc0","44":"#3f51b5","45":"#3949ab","46":"#303f9f","47":"#283593","48":"#1a237e","49":"#8c9eff","4A":"#536dfe","4B":"#3d5afe","4C":"#304ffe","4D":"#2196f3","4E":"#e3f2fd","4F":"#bbdefb","50":"#90caf9","51":"#64b5f6","52":"#42a5f5","53":"#2196f3","54":"#1e88e5","55":"#1976d2","56":"#1565c0","57":"#0d47a1","58":"#82b1ff","59":"#448aff","5A":"#2979ff","5B":"#2962ff","5C":"#03a9f4","5D":"#e1f5fe","5E":"#b3e5fc","5F":"#81d4fa","60":"#4fc3f7","61":"#29b6f6","62":"#03a9f4","63":"#039be5","64":"#0288d1","65":"#0277bd","66":"#01579b","67":"#80d8ff","68":"#40c4ff","69":"#00b0ff","6A":"#0091ea","6B":"#00bcd4","6C":"#e0f7fa","6D":"#b2ebf2","6E":"#80deea","6F":"#4dd0e1","70":"#26c6da","71":"#00bcd4","72":"#00acc1","73":"#0097a7","74":"#00838f","75":"#006064","76":"#84ffff","77":"#18ffff","78":"#00e5ff","79":"#00b8d4","7A":"#009688","7B":"#e0f2f1","7C":"#b2dfdb","7D":"#80cbc4","7E":"#4db6ac","7F":"#26a69a","80":"#009688","81":"#00897b","82":"#00796b","83":"#00695c","84":"#004d40","85":"#a7ffeb","86":"#64ffda","87":"#1de9b6","88":"#00bfa5","89":"#4caf50","8A":"#e8f5e9","8B":"#c8e6c9","8C":"#a5d6a7","8D":"#81c784","8E":"#66bb6a","8F":"#4caf50","90":"#43a047","91":"#388e3c","92":"#2e7d32","93":"#1b5e20","94":"#b9f6ca","95":"#69f0ae","96":"#00e676","97":"#00c853","98":"#8bc34a","99":"#f1f8e9","9A":"#dcedc8","9B":"#c5e1a5","9C":"#aed581","9D":"#9ccc65","9E":"#8bc34a","9F":"#7cb342","A0":"#689f38","A1":"#558b2f","A2":"#33691e","A3":"#ccff90","A4":"#b2ff59","A5":"#76ff03","A6":"#64dd17","A7":"#cddc39","A8":"#f9fbe7","A9":"#f0f4c3","AA":"#e6ee9c","AB":"#dce775","AC":"#d4e157","AD":"#cddc39","AE":"#c0ca33","AF":"#afb42b","B0":"#9e9d24","B1":"#827717","B2":"#ffeb3b","B3":"#fffde7","B4":"#fff9c4","B5":"#fff59d","B6":"#fff176","B7":"#ffee58","B8":"#ffeb3b","B9":"#fdd835","BA":"#fbc02d","BB":"#f9a825","BC":"#f57f17","BD":"#ffc107","BE":"#fff8e1","BF":"#ffecb3","C0":"#ffe082","C1":"#ffd54f","C2":"#ffca28","C3":"#ffc107","C4":"#ffb300","C5":"#ffa000","C6":"#ff8f00","C7":"#ff6f00","C8":"#ff9800","C9":"#fff3e0","CA":"#ffe0b2","CB":"#ffcc80","CC":"#ffb74d","CD":"#ffa726","CE":"#ff9800","CF":"#fb8c00","D0":"#f57c00","D1":"#ef6c00","D2":"#e65100","D3":"#ff5722","D4":"#fbe9e7","D5":"#ffccbc","D6":"#ffab91","D7":"#ff8a65","D8":"#ff7043","D9":"#ff5722","DA":"#f4511e","DB":"#e64a19","DC":"#d84315","DD":"#bf360c","DE":"#795548","DF":"#efebe9","E0":"#d7ccc8","E1":"#bcaaa4","E2":"#a1887f","E3":"#8d6e63","E4":"#795548","E5":"#6d4c41","E6":"#5d4037","E7":"#4e342e","E8":"#3e2723","E9":"#9e9e9e","EA":"#fafafa","EB":"#f5f5f5","EC":"#eeeeee","ED":"#e0e0e0","EE":"#bdbdbd","EF":"#9e9e9e","F0":"#757575","F1":"#616161","F2":"#424242","F3":"#212121","F4":"#607d8b","F5":"#eceff1","F6":"#cfd8dc","F7":"#b0bec5","F8":"#90a4ae","F9":"#78909c","FA":"#607d8b","FB":"#546e7a","FC":"#455a64","FD":"#37474f","FE":"#263238","FF":"#ffffff"};
+
+//DEBUG START
+function highLight(ev, el, pos){
+	var size = document.getElementsByTagName('td')[0].offsetWidth;
+    var left  = (el.offsetLeft+size+5)  + "px";
+    var top  = (el.offsetTop+size+5)  + "px";
+		var tip = document.getElementById("divtoshow");
+	if(pos=="in"){
+  	el.style.outline = "1px solid white";
+    el.style.outlineOffset = "-1px";
+    tip.innerHTML = el.getAttribute("code").replace('HTML','<br>HTML');
+    tip.style.display = "block";
+    tip.style.left = left;
+    tip.style.top = top;
+    } else {
+    el.style.outline = "0px solid white";
+    tip.style.display ="none";
+    }
+};
+
+function debug(){
+	var tab = document.getElementsByTagName('table')[0];
+  var size = document.getElementsByTagName('td')[0].offsetWidth;
+  tab.style.backgroundSize = size+"px "+size+"px";
+  tab.style.backgroundImage = "radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px)";
+	var td = document.getElementsByTagName('td');
+	for(var i=0;i<td.length;i++){
+		td[i].addEventListener("mouseover", function(event){highLight(event, this, "in")});
+		td[i].addEventListener("mouseout", function(event){highLight(event, this, "out")});
+	}
+};
+//DEBUG END
+
+function draw(sprite, area){
+console.log("initializing "+(sprite.length)+" x "+sprite[(sprite.length-1)].length+" canvas");
+var art = "<table>";
+for(var g=0;g<sprite.length;g++){
+art+="<tr>";
+	for(var i=0;i<sprite[g].length;i++){
+		art += "<td code='Code: "+[sprite[g][i]]+"HTML: "+colors[sprite[g][i]]+"' style='background-color:"+colors[sprite[g][i]]+"'></td>"; 
+  }
+art+="</tr>";
+}
+art += "</tr></table>";
+area.innerHTML = art;
+document.body.innerHTML += "<br><button>Debug</button>";
+document.getElementsByTagName('button')[0].addEventListener("click", debug);
+};
+
+draw(drawing, canvas);
+</script>
+</body>
+
+</html>
